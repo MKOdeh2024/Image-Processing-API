@@ -39,7 +39,7 @@ describe('Image API', () => {
       .get('/api/images?filename=fjord.jpg&width=abc&height=200')
       .expect(400);
 
-    expect(response.body.error).toContain('Width and height must be positive numbers');
+    expect(response.body.error).toContain('Width must be a positive integer');
   });
 
   it('should return 400 for invalid height', async () => {
@@ -47,7 +47,7 @@ describe('Image API', () => {
       .get('/api/images?filename=fjord.jpg&width=200&height=abc')
       .expect(400);
 
-    expect(response.body.error).toContain('Width and height must be positive numbers');
+    expect(response.body.error).toContain('Height must be a positive integer');
   });
 
   it('should return 400 for negative width', async () => {
@@ -55,7 +55,7 @@ describe('Image API', () => {
       .get('/api/images?filename=fjord.jpg&width=-100&height=200')
       .expect(400);
 
-    expect(response.body.error).toContain('Width and height must be positive numbers');
+    expect(response.body.error).toContain('Width must be a positive integer');
   });
 
   it('should return 400 for zero height', async () => {
@@ -63,14 +63,38 @@ describe('Image API', () => {
       .get('/api/images?filename=fjord.jpg&width=200&height=0')
       .expect(400);
 
-    expect(response.body.error).toContain('Width and height must be positive numbers');
+    expect(response.body.error).toContain('Height must be between 1 and 10000');
   });
 
-  it('should return 500 for non-existent image', async () => {
+  it('should return 400 for invalid filename', async () => {
     const response = await request(app)
       .get('/api/images?filename=nonexistent.jpg&width=200&height=200')
-      .expect(500);
+      .expect(400);
 
-    expect(response.body.error).toContain('Internal server error');
+    expect(response.body.error).toContain('Invalid filename');
+  });
+
+  it('should return 400 for malformed width', async () => {
+    const response = await request(app)
+      .get('/api/images?filename=fjord.jpg&width=500f&height=200')
+      .expect(400);
+
+    expect(response.body.error).toContain('Width must be a positive integer');
+  });
+
+  it('should return 400 for width too large', async () => {
+    const response = await request(app)
+      .get('/api/images?filename=fjord.jpg&width=15000&height=200')
+      .expect(400);
+
+    expect(response.body.error).toContain('Width must be between 1 and 10000');
+  });
+
+  it('should return 400 for empty filename', async () => {
+    const response = await request(app)
+      .get('/api/images?filename=&width=200&height=200')
+      .expect(400);
+
+    expect(response.body.error).toContain('Filename must be a non-empty string');
   });
 });

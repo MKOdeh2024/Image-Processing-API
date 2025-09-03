@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from 'express';
-import imageRouter from './routes/image.js';
+import imageRouter from './routes/image';
 
 const app: Application = express();
 const port = 3000;

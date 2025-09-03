@@ -1,4 +1,4 @@
 import { Router } from 'express';
-declare const router: Router;
-export default router;
+declare const imageRouter: Router;
+export default imageRouter;
 //# sourceMappingURL=image.d.ts.map
